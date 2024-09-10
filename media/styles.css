@@ -88,3 +88,45 @@ body {
 .view.active {
     display: block;
 }
+
+#settings-view {
+    padding: 10px;
+}
+
+.setting-group {
+    margin-bottom: 15px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.setting-group input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid var(--vscode-input-border);
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+}
+
+#save-settings {
+    padding: 5px 10px;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    cursor: pointer;
+}
+
+/* Add these classes to your existing CSS */
+.hidden {
+    display: none !important;
+}
+
+#chat-view, #settings-view {
+    display: none;
+}
+
+#chat-view.active, #settings-view.active {
+    display: block;
+}

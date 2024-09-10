@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { LLMService } from './llm-service';
+import { getChatViewContent } from './chat-view';
+import { getSettingsViewContent } from './settings-view';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -31,6 +33,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         } catch (error) {
           vscode.window.showErrorMessage('Failed to get response from LLM');
         }
+      } else if (data.type === 'saveSettings') {
+        await this._llmService.updateSettings(data.apiUrl, data.apiKey);
+        vscode.window.showInformationMessage('Settings saved successfully');
+        this._updateWebview();
       }
     });
   }
@@ -46,6 +52,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._context.extensionUri, 'media', 'styles.css'));
 
     const nonce = getNonce();
+
+    const currentSettings = {
+      apiUrl: this._context.globalState.get('llmApiUrl', '') as string,
+      apiKey: this._context.globalState.get('llmApiKey', '') as string
+    };
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -63,14 +74,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 <button id="settings-tab" class="tab-button">Settings</button>
             </div>
             <div id="content">
-                <div id="chat-view" class="view active">
-                    <div id="messages"></div>
-                    <div id="input-container">
-                        <input type="text" id="message-input" placeholder="Type your message...">
-                        <button id="send-button">Send</button>
-                    </div>
-                </div>
-                <div id="settings-view" class="view"></div>
+                ${getChatViewContent(webview)}
+                ${getSettingsViewContent(webview, currentSettings)}
             </div>
         </div>
         <script nonce="${nonce}" src="${scriptUri}"></script>
