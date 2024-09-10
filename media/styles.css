@@ -130,3 +130,46 @@ body {
 #chat-view.active, #settings-view.active {
     display: block;
 }
+
+/* Add these styles to your existing CSS */
+
+#file-view {
+    padding: 10px;
+}
+
+#file-content {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--vscode-input-border);
+    padding: 10px;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.file-context-control {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+#use-file-content-checkbox {
+    margin-right: 5px;
+}
+
+#use-file-content {
+    padding: 5px 10px;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    cursor: pointer;
+}
+
+/* Add these styles to your existing CSS */
+
+.context-info {
+    font-size: 0.8em;
+    color: var(--vscode-descriptionForeground);
+    margin-bottom: 5px;
+    font-style: italic;
+}

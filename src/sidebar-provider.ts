@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { LLMService } from './llm-service';
 import { getChatViewContent } from './chat-view';
 import { getSettingsViewContent } from './settings-view';
+import { getFileViewContent } from './file-view';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -26,19 +27,37 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this._updateWebview();
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
-      if (data.type === 'sendMessage') {
-        try {
-          const reply = await this._llmService.chat(data.message);
-          webviewView.webview.postMessage({ type: 'addMessage', reply });
-        } catch (error) {
-          vscode.window.showErrorMessage('Failed to get response from LLM');
-        }
-      } else if (data.type === 'saveSettings') {
-        await this._llmService.updateSettings(data.apiUrl, data.apiKey);
-        vscode.window.showInformationMessage('Settings saved successfully');
-        this._updateWebview();
+      switch (data.type) {
+        case 'sendMessage':
+          try {
+            const reply = await this._llmService.chat(data.message, data.fileContent, data.fileName);
+            webviewView.webview.postMessage({ type: 'addMessage', reply });
+          } catch (error) {
+            vscode.window.showErrorMessage('Failed to get response from LLM');
+          }
+          break;
+        case 'saveSettings':
+          await this._llmService.updateSettings(data.apiUrl, data.apiKey);
+          vscode.window.showInformationMessage('Settings saved successfully');
+          break;
       }
     });
+
+    // Listen for active editor changes
+    vscode.window.onDidChangeActiveTextEditor(() => {
+      this._updateWebview();
+      this._updateFileContent(webviewView);
+    });
+
+    // Listen for document changes
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      if (event.document === vscode.window.activeTextEditor?.document) {
+        this._updateFileContent(webviewView);
+      }
+    });
+
+    // Initial update of file content
+    this._updateFileContent(webviewView);
   }
 
   private _updateWebview() {
@@ -58,6 +77,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       apiKey: this._context.globalState.get('llmApiKey', '') as string
     };
 
+    const currentFile = vscode.window.activeTextEditor?.document.getText() || '';
+    const currentFileName = vscode.window.activeTextEditor?.document.fileName || 'No file open';
+
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -71,16 +93,28 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <div id="sidebar-container">
             <div id="tabs">
                 <button id="chat-tab" class="tab-button active">Chat</button>
+                <button id="file-tab" class="tab-button">Current File</button>
                 <button id="settings-tab" class="tab-button">Settings</button>
             </div>
             <div id="content">
                 ${getChatViewContent(webview)}
+                ${getFileViewContent(webview, currentFileName, currentFile)}
                 ${getSettingsViewContent(webview, currentSettings)}
             </div>
         </div>
         <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;
+  }
+
+  private _updateFileContent(webviewView: vscode.WebviewView) {
+    const currentFile = vscode.window.activeTextEditor?.document.getText() || '';
+    const fileName = vscode.window.activeTextEditor?.document.fileName || 'Untitled';
+    webviewView.webview.postMessage({ 
+      type: 'updateFileContent', 
+      content: currentFile,
+      fileName: fileName
+    });
   }
 }
 
