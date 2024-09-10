@@ -34,6 +34,30 @@
         switchTab(settingsTab, settingsView, [chatTab, fileTab], [chatView, fileView]);
     });
 
+    function formatMessage(message) {
+        const codeBlockRegex = /```([\s\S]*?)```/g;
+        const parts = [];
+        let lastIndex = 0;
+        let match;
+
+        while ((match = codeBlockRegex.exec(message)) !== null) {
+            // Add text before code block
+            if (match.index > lastIndex) {
+                parts.push({ type: 'text', content: message.slice(lastIndex, match.index) });
+            }
+            // Add code block
+            parts.push({ type: 'code', content: match[1].trim() });
+            lastIndex = match.index + match[0].length;
+        }
+
+        // Add remaining text after last code block
+        if (lastIndex < message.length) {
+            parts.push({ type: 'text', content: message.slice(lastIndex) });
+        }
+
+        return parts;
+    }
+
     function addMessage(message, isUser, useFileContext = false) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
@@ -46,9 +70,20 @@
             messageElement.appendChild(contextInfo);
         }
         
-        const messageText = document.createElement('div');
-        messageText.textContent = message;
-        messageElement.appendChild(messageText);
+        const formattedParts = formatMessage(message);
+        formattedParts.forEach(part => {
+            if (part.type === 'text') {
+                const textElement = document.createElement('p');
+                textElement.textContent = part.content;
+                messageElement.appendChild(textElement);
+            } else if (part.type === 'code') {
+                const preElement = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.textContent = part.content;
+                preElement.appendChild(codeElement);
+                messageElement.appendChild(preElement);
+            }
+        });
         
         messagesContainer.appendChild(messageElement);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;

@@ -173,3 +173,17 @@ body {
     margin-bottom: 5px;
     font-style: italic;
 }
+
+.message pre {
+    background-color: var(--vscode-textCodeBlock-background);
+    border-radius: 3px;
+    padding: 10px;
+    overflow-x: auto;
+    margin: 10px 0;
+}
+
+.message code {
+    font-family: var(--vscode-editor-font-family);
+    font-size: var(--vscode-editor-font-size);
+    color: var(--vscode-textPreformat-foreground);
+}
