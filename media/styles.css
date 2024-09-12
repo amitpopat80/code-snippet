@@ -187,3 +187,21 @@ body {
     font-size: var(--vscode-editor-font-size);
     color: var(--vscode-textPreformat-foreground);
 }
+
+/* ... (keep existing styles) */
+
+.insert-code-button,
+.merge-code-button {
+    margin-right: 5px;
+    padding: 3px 8px;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.insert-code-button:hover,
+.merge-code-button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}

@@ -41,16 +41,13 @@
         let match;
 
         while ((match = codeBlockRegex.exec(message)) !== null) {
-            // Add text before code block
             if (match.index > lastIndex) {
                 parts.push({ type: 'text', content: message.slice(lastIndex, match.index) });
             }
-            // Add code block
             parts.push({ type: 'code', content: match[1].trim() });
             lastIndex = match.index + match[0].length;
         }
 
-        // Add remaining text after last code block
         if (lastIndex < message.length) {
             parts.push({ type: 'text', content: message.slice(lastIndex) });
         }
@@ -71,7 +68,7 @@
         }
         
         const formattedParts = formatMessage(message);
-        formattedParts.forEach(part => {
+        formattedParts.forEach((part, index) => {
             if (part.type === 'text') {
                 const textElement = document.createElement('p');
                 textElement.textContent = part.content;
@@ -82,6 +79,32 @@
                 codeElement.textContent = part.content;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
+
+                if (!isUser) {
+                    const insertButton = document.createElement('button');
+                    insertButton.textContent = 'Insert';
+                    insertButton.classList.add('insert-code-button');
+                    insertButton.addEventListener('click', () => {
+                        vscode.postMessage({
+                            type: 'insertCode',
+                            code: part.content,
+                            index: index
+                        });
+                    });
+                    messageElement.appendChild(insertButton);
+
+                    const mergeButton = document.createElement('button');
+                    mergeButton.textContent = 'Merge';
+                    mergeButton.classList.add('merge-code-button');
+                    mergeButton.addEventListener('click', () => {
+                        vscode.postMessage({
+                            type: 'mergeCode',
+                            code: part.content,
+                            index: index
+                        });
+                    });
+                    messageElement.appendChild(mergeButton);
+                }
             }
         });
         

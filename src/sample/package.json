@@ -1,0 +1,17 @@
+"contributes": {
+  "views": {
+    "twinny": [
+      {
+        "type": "webview",
+        "id": "twinny-sidebar",
+        "name": "Twinny Chat"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "command": "twinny.start",
+      "title": "Start Twinny Chat"
+    }
+  ]
+}
