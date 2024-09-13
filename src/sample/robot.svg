@@ -1,13 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
   <style>
-    .robot { fill: #4a4a4a; }
-    .letter { fill: #00b8d4; }
-    .eye { fill: #00b8d4; }
-    .antenna { fill: #757575; }
+    .robot-body { fill: #3498db; }
+    .robot-head { fill: #2980b9; }
+    .eye { fill: #ecf0f1; }
+    .pupil { fill: #34495e; }
+    .antenna { fill: #e74c3c; }
+    .letter { fill: #f1c40f; }
   </style>
-  <path class="robot" d="M7 4v2H5v12h2v2h10v-2h2V6h-2V4H7zm1 3h8v9H8V7z"/>
-  <circle class="eye" cx="10" cy="9" r="1"/>
-  <circle class="eye" cx="14" cy="9" r="1"/>
-  <path class="antenna" d="M12 2L11 4h2z"/>
-  <path class="letter" d="M11.5 11.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5H13v-1h-1.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5H13v-1h-1.5z"/>
+  <rect class="robot-body" x="5" y="8" width="14" height="12" rx="2"/>
+  <circle class="robot-head" cx="12" cy="7" r="5"/>
+  <circle class="eye" cx="10" cy="7" r="1.5"/>
+  <circle class="eye" cx="14" cy="7" r="1.5"/>
+  <circle class="pupil" cx="10" cy="7" r="0.5"/>
+  <circle class="pupil" cx="14" cy="7" r="0.5"/>
+  <path class="antenna" d="M12 2l-1 2h2z"/>
+  <path class="letter" d="M10 13.5c0-1.1.9-2 2-2h1.5v1.5h-1.5c-.3 0-.5.2-.5.5s.2.5.5.5h1.5v1.5h-1.5c-1.1 0-2-.9-2-2z"/>
 </svg>
