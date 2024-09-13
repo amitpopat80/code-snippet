@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <style>
+    .robot { fill: #4a4a4a; }
+    .letter { fill: #00b8d4; }
+    .eye { fill: #00b8d4; }
+    .antenna { fill: #757575; }
+  </style>
+  <path class="robot" d="M7 4v2H5v12h2v2h10v-2h2V6h-2V4H7zm1 3h8v9H8V7z"/>
+  <circle class="eye" cx="10" cy="9" r="1"/>
+  <circle class="eye" cx="14" cy="9" r="1"/>
+  <path class="antenna" d="M12 2L11 4h2z"/>
+  <path class="letter" d="M11.5 11.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5H13v-1h-1.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5H13v-1h-1.5z"/>
+</svg>
