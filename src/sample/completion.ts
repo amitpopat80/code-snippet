@@ -55,3 +55,56 @@ export class CompletionProvider implements vscode.InlineCompletionItemProvider {
     return "// AI generated code here"
   }
 }
+
+
+//Mock
+
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
+import json
+import asyncio
+
+app = FastAPI()
+
+@app.post("/v1/completions")
+async def completions(request: Request):
+    body = await request.json()
+    prompt = body["prompt"]
+    
+    # Check if the prompt contains the specific function we want to optimize
+    if "def mysterious_function(x):" in prompt:
+        optimized_code = [
+            "def optimized_mysterious_function(x):",
+            "    # This is actually a bubble sort algorithm",
+            "    # We can optimize it by using Python's built-in sorted() function",
+            "    return sorted(x)",
+            "",
+            "# Alternatively, if in-place sorting is required:",
+            "def in_place_optimized_mysterious_function(x):",
+            "    x.sort()",
+            "    return x",
+            "",
+            "# Explanation:",
+            "# 1. The original function implements a bubble sort algorithm, which has O(n^2) time complexity.",
+            "# 2. Python's built-in sorted() and list.sort() methods use Timsort, which has O(n log n) time complexity.",
+            "# 3. This optimization significantly improves performance, especially for larger lists.",
+            "# 4. If in-place sorting is not required, use the first function. Otherwise, use the second function."
+        ]
+        
+        async def generate():
+            for line in optimized_code:
+                yield f"data: {json.dumps({'choices': [{'text': line + '\\n'}]})}\n\n"
+                await asyncio.sleep(0.1)  # Simulate some delay between chunks
+            yield "data: [DONE]\n\n"
+        
+        return StreamingResponse(generate(), media_type="text/event-stream")
+    else:
+        # Handle other prompts or return an error
+        async def generate_error():
+            yield f"data: {json.dumps({'error': 'Unsupported prompt'})}\n\n"
+        
+        return StreamingResponse(generate_error(), media_type="text/event-stream")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
