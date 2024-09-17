@@ -59,6 +59,28 @@ async def completions(request: Request):
     
     return StreamingResponse(generate(), media_type="text/event-stream")
 
+
+@app.post("/v1/completions")
+async def completions(request: Request):
+    async def generate():
+        response = {
+            "choices": [{
+                "text": "sorry",
+                "index": 0,
+                "logprobs": None,
+                "finish_reason": "stop"
+            }],
+            "usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": 1,
+                "total_tokens": 1
+            }
+        }
+        yield "data: " + json.dumps(response) + "\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
